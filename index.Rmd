@@ -1,0 +1,55 @@
+---
+title: "Demo Project"
+author: "dearbharat"
+date: "2022-07-22"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+# Project Setup
+Import libraries and data
+
+## Import Libraries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dataRetrieval)
+library(dygraphs)
+library(xts)
+```
+
+## Data Retreival
+
+```{r}
+data <- readNWISdv(siteNumbers = '01315000',
+                   parameterCd = '00060',
+                   startDate = "2017-01-01",
+                   endDate = "2022-07-22"
+                   ) %>%
+  rename(discharge = 'X_00060_00003')
+```
+
+# Project Description
+This project demonstrates dygraphs
+![](https://www.e-education.psu.edu/earth111/sites/www.e-education.psu.edu.earth111/files/Module3/DischargeCalculation.PNG)
+
+# Data Visualization
+## Data Plot
+
+```{r fig.height=6, fig.width=8}
+ggplot(data, aes(x = Date, y = discharge)) + 
+  geom_line() +
+  ylab("Quantity discharged") +
+  ggtitle("Discharge in Indian River, NY")
+```
+
+### Interactive Dygraphs
+
+```{r}
+data_xts <- xts(data$discharge, order.by = data$Date)
+dygraph(data_xts) %>%
+  dyAxis("y", label = "Discharge Quantity")
+```
+
